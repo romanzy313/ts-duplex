@@ -1,91 +1,44 @@
-# Getting started
-
-// define types on one object
-
-// use proxy to make types refactorable?
-// can separate dots into thier own recursive types
-
-clone the repo and detach from
-
-```bash
-git clone https://github.com/romanzy-1612/modern-ts-lib-starter.git PROJECTNAME
-cd PROJECTNAME
-rm -rf ./.git
-```
-
-customize this template
-
-```bash
-node init-template.js
-```
-
-install dependencies and run tests
-
-```bash
-pnpm install
-pnpm test
-```
-
-# Whats included
-
-- Vite/tsc bundling
-- Vitest unit testing
-- Playwright e2e testing
-- Minimal eslint and prettier configuration
-- Easy templating for customized npm publishable repo
-- Working ? github actions for testing
-
-# Create another example
-
-Create new vite project and install your library
-
-```bash
-pnpm create vite example2
-cd example2
-pnpm install ts-duplex
-```
-
-Use your library as folloing:
-
-```typescript
-import { DummyClass } from 'ts-duplex/src';
-console.log(DummyClass);
-```
-
-# TODOS
-
-[] Cache playwright deps (https://playwrightsolutions.com/playwright-github-action-to-cache-the-browser-binaries/)
-
-_delete above here to start writing your README_
-
 # ts-duplex
 
-description
+A simple library to add typesafety to bi-directional communications in full-stack typescript applications. This library includes a universal websocket client, [zod](https://github.com/colinhacks/zod) validator, and [ws](https://github.com/websockets/ws) integration
 
-# Features
+Read the docs (TODO)
+
+## Explansion plans:
+
+### Validators
+
+- [ ] Typebox
+
+### Backends
+
+- [ ] Cloudflare Workers websockets
+- [ ] Bun
 
 # Installation
 
 npm
 
 ```bash
-npm install ts-duplex
+npm install ts-duplex@latest
 ```
 
 yarn
 
 ```bash
-yarn add ts-duplex
+yarn add ts-duplex@latest
 ```
 
 pnpm
 
 ```bash
-pnpm install ts-duplex
+pnpm install ts-duplex@latest
 ```
+
+# Getting started
+
+TODO
 
 # Usage
 
-# Examples
-
-See more examples [here](example)
+See example with [ws and zod](examples/ws)

@@ -1,7 +1,16 @@
 {
   "name": "ts-duplex",
-  "description": "description",
-  "version": "0.0.0",
+  "description": "Typesafe remote procedure calls in full-stack typescript applications utilitizing WebSockets",
+  "keywords": [
+    "typesafe",
+    "validation",
+    "websockets",
+    "rpc",
+    "ws",
+    "duplex",
+    "zod"
+  ],
+  "version": "0.9.0",
   "type": "module",
   "exports": {
     ".": "./dist/index.js",
@@ -54,7 +63,6 @@
     "zod": "^3.22.4"
   },
   "license": "MIT",
-  "keywords": [],
   "repository": {
     "type": "git",
     "url": "https://github.com/romanzy313/ts-duplex.git"

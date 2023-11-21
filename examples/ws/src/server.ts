@@ -54,6 +54,7 @@ wss.on('connection', function (_ws) {
       });
   });
 
+  // just for example
   ws.on('gracefulDisconnect', () => {
     setTimeout(() => {
       _ws.close(1000, 'graceful shutdown');
