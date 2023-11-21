@@ -12,7 +12,7 @@ A simple library to add typesafety to bi-directional communications in full-stac
 
 ### Validators
 
-- [ ] Zod
+- [x] Zod
 - [ ] Typebox
 
 ### Integrations
