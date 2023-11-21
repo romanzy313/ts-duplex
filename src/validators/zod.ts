@@ -1,10 +1,11 @@
 import { ValidatorFn } from '../types';
 import z from 'zod';
 
-export type ZodValidatorDefinition = Record<string, z.ZodSchema>;
+// dont use it!
+type ZodValidatorDefinition = Record<string, z.ZodSchema>;
 
 export type InferZodValidatorType<T extends ZodValidatorDefinition> = {
-  [Key in keyof T]: z.output<T[Key]>;
+  [Key in keyof T]: z.infer<T[Key]>;
 };
 
 export function zodValidator(def: ZodValidatorDefinition): ValidatorFn {
@@ -18,17 +19,3 @@ export function zodValidator(def: ZodValidatorDefinition): ValidatorFn {
     return validator.parse(data);
   };
 }
-
-// dont specify the type so that it works... amazing typescipt
-
-// test
-const def: ZodValidatorDefinition = {
-  hello: z.object({
-    field: z.number(),
-  }),
-  another: z.string(),
-};
-// type Derived = {
-//   readonly [x: string]: any;
-// };
-type Derived = InferZodValidatorType<typeof def>;

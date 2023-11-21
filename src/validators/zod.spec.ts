@@ -1,10 +1,6 @@
 import { describe, it, expect, expectTypeOf, assertType } from 'vitest';
 import z from 'zod';
-import {
-  ZodValidatorDefinition,
-  zodValidator,
-  InferZodValidatorType,
-} from './zod';
+import { zodValidator, InferZodValidatorType } from './zod';
 /**
  * Dummy test
  */
@@ -33,10 +29,6 @@ describe('zod validator', () => {
       };
       another: string;
     }>();
-
-    // assertType<
-    //   {} as DerivedTypes
-    // >(typeTest);
 
     expect(validator('another', 'woorld')).toBe('woorld');
     expect(validator('hello', { field2: 44 })).toStrictEqual({ field2: 44 });

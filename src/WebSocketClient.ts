@@ -3,7 +3,7 @@ import { TypePack, ValidatorFn } from './types';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import type { UrlProvider, Options } from 'reconnecting-websocket';
 
-type Opts = {
+type WebSocketClientOptions = {
   Server2Client?: ValidatorFn;
   Client2Server?: ValidatorFn;
   protocols?: string | string[];
@@ -15,7 +15,7 @@ export class WebSocketClient<T extends TypePack> extends TypedDuplex<
 > {
   public ws: ReconnectingWebSocket;
 
-  constructor(url: UrlProvider, private opts?: Opts) {
+  constructor(url: UrlProvider, private opts?: WebSocketClientOptions) {
     // dont do this, as reconnects will be tried
 
     const ws = new ReconnectingWebSocket(url, opts?.protocols, opts);

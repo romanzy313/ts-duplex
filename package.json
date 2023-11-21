@@ -5,6 +5,7 @@
   "type": "module",
   "exports": {
     ".": "./dist/index.js",
+    "./TypedDuplex": "./dist/TypedDuplex.js",
     "./WebSocketClient": "./dist/WebSocketClient.js",
     "./integrations/*": "./dist/integrations/*.js",
     "./validators/*": "./dist/validators/*.js"
