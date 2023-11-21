@@ -1,4 +1,4 @@
-import { DummyClass } from 'placeholder-lib-name';
+import { DummyClass } from 'ts-duplex';
 
 document.querySelector<HTMLDivElement>('#app')!.innerHTML = `
   <div>

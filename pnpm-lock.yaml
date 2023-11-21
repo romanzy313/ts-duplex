@@ -53,7 +53,7 @@ importers:
 
   examples/example1:
     dependencies:
-      placeholder-lib-name:
+      ts-duplex:
         specifier: workspace:^
         version: link:../..
     devDependencies:

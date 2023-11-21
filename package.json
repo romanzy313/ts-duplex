@@ -1,6 +1,6 @@
 {
-  "name": "placeholder-lib-name",
-  "description": "<<DESCRIPTION>>",
+  "name": "ts-duplex",
+  "description": "description",
   "version": "0.0.0",
   "exports": {
     ".": "./dist/index.js"
@@ -15,14 +15,10 @@
   ],
   "scripts": {
     "dev": "vitest",
-    "build": " pnpm build:tsc",
-    "build:tsc": "tsc",
-    "build:vite": "vite build",
-    "test": "vitest run && playwright test",
+    "build": "tsc",
+    "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest --coverage",
-    "test:unit": "vitest run",
-    "test:e2e": "playwright test --trace on",
     "test:publish": "pnpm prepublishOnly && pnpm pack",
     "prepublishOnly": "pnpm clean && pnpm prettier && pnpm lint && pnpm test && pnpm build",
     "clean": "rimraf -rf ./dist && rimraf -rf ./types && rimraf -rf ./*-*.tgz",
@@ -52,7 +48,7 @@
   "keywords": [],
   "repository": {
     "type": "git",
-    "url": "https://github.com/<<GIT-USERNAME>>/placeholder-lib-name.git"
+    "url": "https://github.com/romanzy313/ts-duplex.git"
   },
-  "author": "<<AUTHOR>>"
+  "author": "Roman Volovoy"
 }

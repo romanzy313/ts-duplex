@@ -34,14 +34,14 @@ Create new vite project and install your library
 ```bash
 pnpm create vite example2
 cd example2
-pnpm install placeholder-lib-name
+pnpm install ts-duplex
 ```
 
 Use your library as folloing:
 
 
 ```typescript
-import { DummyClass } from 'placeholder-lib-name/src';
+import { DummyClass } from 'ts-duplex/src';
 console.log(DummyClass);
 ```
 
@@ -51,9 +51,9 @@ console.log(DummyClass);
 
 _delete above here to start writing your README_
 
-# placeholder-lib-name
+# ts-duplex
 
-<<DESCRIPTION>>
+description
 
 # Features
 
@@ -61,17 +61,17 @@ _delete above here to start writing your README_
 
 npm
 ```bash
-npm install placeholder-lib-name
+npm install ts-duplex
 ```
 
 yarn
 ```bash
-yarn add placeholder-lib-name
+yarn add ts-duplex
 ```
 
 pnpm
 ```bash
-pnpm install placeholder-lib-name
+pnpm install ts-duplex
 ```
 
 # Usage

@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  placeholder-lib-name:
+  ts-duplex:
     specifier: file:../
     version: file:..
 
@@ -330,5 +330,5 @@ packages:
 
   file:..:
     resolution: {directory: .., type: directory}
-    name: placeholder-lib-name
+    name: ts-duplex
     dev: false

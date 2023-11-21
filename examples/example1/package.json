@@ -1,5 +1,5 @@
 {
-  "name": "placeholder-lib-name-example",
+  "name": "ts-duplex-example",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,7 +10,7 @@
     "e2e": "vite build && vite preview --port 3030 --host"
   },
   "dependencies": {
-    "placeholder-lib-name": "workspace:^"
+    "ts-duplex": "workspace:^"
   },
   "devDependencies": {
     "typescript": "^5.0.2",
