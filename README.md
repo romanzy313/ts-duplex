@@ -156,6 +156,7 @@ stopBtn.addEventListener('click', () => {
 
 client.on('newMessage', ({ from, content, time }) => {
   if (from === usernameInput.value) return;
+  console.log('got message', content);
 
   const message = `[${new Date(
     time
@@ -191,8 +192,13 @@ form.addEventListener('submit', (ev) => {
 
 And we are done! See and run this example [here](examples/ws)
 
+# API
+
+TODO. Most things are well typed. Try it out and explore!
+
 # Caviats
 
 - When method requires no data, type it as `null`
 - Refactoring of method names with lsp is not possible in the current version. Proxy client could enable that
 - The API is more or less final, but I may want to refactor names of functions before version 1
+- This really needs a better name

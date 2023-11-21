@@ -17,6 +17,7 @@ stopBtn.addEventListener('click', () => {
 
 client.on('newMessage', ({ from, content, time }) => {
   if (from === usernameInput.value) return;
+  console.log('got message', content);
 
   const message = `[${new Date(
     time
