@@ -6,15 +6,16 @@ A simple library to add typesafety to bi-directional communications in full-stac
 
 ## Features
 
+<!--
 - Optional validation of inputs/outputs
--
+- -->
 
 ### Validators
 
 - [ ] Zod
 - [ ] Typebox
 
-### Implemetation
+### Integrations
 
 - [x] Universal WebSocket client
 - [x] Ws
@@ -45,13 +46,14 @@ pnpm install ts-duplex@latest
 
 ## Quick example
 
-Define your schemas in `./schema.ts`. Schema must be a record with values as schema:
+Define schemas first. `AllTypes` must be a `Typepack` with `Server2Client` and `Client2Server`. These types can be defined directly without using zod, but then typesafety only happens in your IDE. Use `InferZodValidatorType` to easily convert schemas into types. `schema.ts`:
 
 ```ts
 import { TypePack } from 'ts-duplex';
 import type { InferZodValidatorType } from 'ts-duplex/validators/zod';
 import z from 'zod';
 
+// Record<MethodName, ZodSchema>
 export const Server2Client = {
   newMessage: z.object({
     from: z.string(),
@@ -70,12 +72,12 @@ export const Client2Server = {
 };
 
 export type AllTypes = TypePack<
-  InferZodValidatorType<typeof Client2Server>, // client to server communication goes first
+  InferZodValidatorType<typeof Client2Server>,
   InferZodValidatorType<typeof Server2Client>
 >;
 ```
 
-Create simple server in `./server.ts`:
+Create a simple server. `server.ts`:
 
 ```ts
 import http from 'http';
@@ -134,7 +136,7 @@ wss.on('connection', function (_ws) {
 });
 ```
 
-And now create a client `./client.ts`:
+And now create a client. `client.ts`:
 
 ```ts
 import { WebSocketClient } from 'ts-duplex/WebSocketClient';
@@ -190,6 +192,22 @@ form.addEventListener('submit', (ev) => {
 });
 ```
 
+Lets not forget about client html `index.html`:
+
+```html
+<form>
+  <label for="username">Username</label>
+  <input id="username" name="username" placeholder="Username" value="user" />
+  <label for="message">Message</label>
+  <input id="message" name="message" placeholder="Message" value="" />
+  <button id="send" type="submit">Send</button>
+</form>
+
+<button id="stop">Stop</button>
+<ul id="messages"></ul>
+<script type="module" src="/src/client.ts"></script>
+```
+
 And we are done! See and run this example [here](examples/ws)
 
 # API
@@ -199,6 +217,6 @@ TODO. Most things are well typed. Try it out and explore!
 # Caviats
 
 - When method requires no data, type it as `null`
-- Refactoring of method names with lsp is not possible in the current version. Proxy client could enable that
-- The API is more or less final, but I may want to refactor names of functions before version 1
-- This really needs a better name
+- Refactoring of method names with lsp is not possible in the current version. Proxy client could enable that.
+- The API is more or less final, but I may want to refactor names of functions/type and move exports around before version 1.0
+- This lib really needs a better name
