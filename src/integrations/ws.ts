@@ -13,7 +13,7 @@ export class WsDuplex<T extends TypePack> extends TypedDuplex<
 > {
   constructor(public ws: WebSocket, opts?: WsDuplexOptions) {
     ws.on('message', (data) => {
-      // convert and ensure
+      // convert and ensure its of right format
       const todoData = data.toString();
 
       this.handleMessage(todoData);

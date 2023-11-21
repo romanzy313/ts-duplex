@@ -29,8 +29,6 @@ type Encoded = [number, string, any]; // id, method, data
 function decode(msg: string): Encoded {
   const val = JSON.parse(msg);
 
-  // console.log('decoding val', val);
-
   if (!Array.isArray(val) || val.length != 3) {
     throw new Error('message is of wrong format');
   }
@@ -39,10 +37,12 @@ function decode(msg: string): Encoded {
 }
 
 function encode(id: number, op: string, data: any): string {
-  console.log('encoding payload', op, 'data', data);
-
   return JSON.stringify([id, op, data]);
 }
+
+type InternalOptions = {
+  debug?: boolean; // non optional method to log incoming/outgoing events
+} & Validators;
 
 export class TypedDuplex<
   This2Other extends BaseEventMap,
@@ -55,18 +55,10 @@ export class TypedDuplex<
 
   constructor(
     private sendFn: (msg: string) => void,
-    private validators: Validators
-  ) {
-    // listenFn((msg) => {
-    //   const decoded = decode(msg);
-    //   if (!decoded) return;
-    //   this.emit<any>(decoded[1], decoded[2]);
-    //   //   this.onEvent<any>(decoded[1], decoded[2]);
-    // });
-  }
+    private internalOptions: InternalOptions
+  ) {}
 
-  //Promise<ReturnType<This2Others[E]>>
-
+  // TODO expose to the lib
   protected handleError(err: any) {
     console.error('TypedDuplex error', err);
   }
@@ -91,8 +83,8 @@ export class TypedDuplex<
   protected handleMessage(msg: string) {
     try {
       const decoded = decode(msg);
-      if (this.validators.Other2This) {
-        const validatedData = this.validators.Other2This(
+      if (this.internalOptions.Other2This) {
+        const validatedData = this.internalOptions.Other2This(
           decoded[1],
           decoded[2]
         );
@@ -114,8 +106,8 @@ export class TypedDuplex<
       const actualData =
         typeof data[0] === 'undefined'
           ? null
-          : this.validators.This2Other
-          ? this.validators.This2Other(event as string, data[0])
+          : this.internalOptions.This2Other
+          ? this.internalOptions.This2Other(event as string, data[0])
           : data[0];
 
       const encoded = encode(this.count++, event as string, actualData);
@@ -134,16 +126,12 @@ export class TypedDuplex<
       const actualData =
         typeof data[0] === 'undefined'
           ? null
-          : this.validators.This2Other
-          ? this.validators.This2Other(event as string, data[0])
+          : this.internalOptions.This2Other
+          ? this.internalOptions.This2Other(event as string, data[0])
           : data[0];
 
       const encoded = encode(this.count++, event as string, actualData);
       return encoded;
-
-      // const encoded = encode(this.count++, event as string, data[0]);
-      // // this.sendFn(encoded);
-      // return encoded;
     } catch (err: any) {
       // capture as error on here
       this.handleError(err);
@@ -161,20 +149,17 @@ export class TypedDuplex<
     event: E,
     listener: (data: Other2This[E]) => void
   ): UnsubscribeFn {
-    if (!this.eventMap[event as string]) this.eventMap[event as string] = [];
-    // this.eventMap[event] = this.eventMap[event] ?? [];
+    // if (!this.eventMap[event as string]) this.eventMap[event as string] = [];
+    this.eventMap[event as string] = this.eventMap[event as string] ?? [];
     this.eventMap[event as string].push(listener);
 
-    // return unsubscriber function
-
+    // return unsubscriber function, very nice
     return () => {
       this.off(event, listener);
     };
-
-    // return this;
   }
 
-  // other convenience methods
+  // TODO other convenience methods
   //   /**
   //    * Subscribes to event once
   //    * @param event Event name
@@ -247,9 +232,11 @@ export class TypedDuplex<
     return this;
   }
 
+  // TODO maybe make this protected?
+
   /**
-   * Unsubscribes all from event. If no arguments are passed,
-   * all events are removed
+   * Unsubscribes all from event name. If no arguments are passed,
+   * all events are removed complely. Used internally when cleaning up
    * @param event Event name
    * @returns
    */
