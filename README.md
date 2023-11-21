@@ -1,21 +1,29 @@
 # ts-duplex
 
-A simple library to add typesafety to bi-directional communications in full-stack typescript applications. This library includes a universal websocket client, [zod](https://github.com/colinhacks/zod) validator, and [ws](https://github.com/websockets/ws) integration
+A simple library to add typesafety to bi-directional communications in full-stack typescript applications. Ts-duplex enables great DX while validating data and making your applications safer. This library includes a universal websocket client, [zod](https://github.com/colinhacks/zod) validator, and [ws](https://github.com/websockets/ws) integration
 
-Read the docs (TODO)
+<!-- Read the docs (TODO) -->
 
-## Explansion plans:
+## Features
+
+- Optional validation of inputs/outputs
+-
 
 ### Validators
 
+- [ ] Zod
 - [ ] Typebox
 
-### Backends
+### Implemetation
 
+- [x] Universal WebSocket client
+- [x] Ws
 - [ ] Cloudflare Workers websockets
 - [ ] Bun
 
-# Installation
+# Getting started
+
+## Installation
 
 npm
 
@@ -35,10 +43,156 @@ pnpm
 pnpm install ts-duplex@latest
 ```
 
-# Getting started
+## Quick example
 
-TODO
+Define your schemas in `./schema.ts`. Schema must be a record with values as schema:
 
-# Usage
+```ts
+import { TypePack } from 'ts-duplex';
+import type { InferZodValidatorType } from 'ts-duplex/validators/zod';
+import z from 'zod';
 
-See example with [ws and zod](examples/ws)
+export const Server2Client = {
+  newMessage: z.object({
+    from: z.string(),
+    content: z.string(),
+    time: z.number(),
+  }),
+  hello: z.null(),
+};
+
+export const Client2Server = {
+  sendMessage: z.object({
+    as: z.string(),
+    content: z.string(),
+  }),
+  gracefulDisconnect: z.null(),
+};
+
+export type AllTypes = TypePack<
+  InferZodValidatorType<typeof Client2Server>, // client to server communication goes first
+  InferZodValidatorType<typeof Server2Client>
+>;
+```
+
+Create simple server in `./server.ts`:
+
+```ts
+import http from 'http';
+import { WebSocketServer } from 'ws';
+import { WsDuplex } from 'ts-duplex/integrations/ws';
+import { zodValidator } from 'ts-duplex/validators/zod';
+import { AllTypes, Client2Server, Server2Client } from './schema';
+
+const port = 3030;
+const server = http.createServer();
+server.listen(port, () => {
+  console.log('server listening at', `http://localhost:${port}/`);
+});
+
+const wss = new WebSocketServer({ server });
+
+wss.on('connection', function (_ws) {
+  // upgrade default ws into typesafe one and define validators
+  const ws = new WsDuplex<AllTypes>(_ws, {
+    Client2Server: zodValidator(Client2Server),
+    Server2Client: zodValidator(Server2Client),
+  });
+
+  ws.send('hello');
+
+  ws.on('sendMessage', (data) => {
+    console.log('got message', data);
+
+    // send to the original sender
+    ws.send('newMessage', {
+      from: 'me',
+      content: data.content,
+      time: Date.now(),
+    });
+
+    // send to others
+    const payload = ws.getSendPayload('newMessage', {
+      from: data.as,
+      content: data.content,
+      time: Date.now(),
+    });
+
+    // send payload to everyone
+    if (payload)
+      wss.clients.forEach((c) => {
+        c.send(payload);
+      });
+  });
+
+  // just for sake of example
+  ws.on('gracefulDisconnect', () => {
+    setTimeout(() => {
+      _ws.close(1000, 'graceful shutdown');
+    }, 2000);
+  });
+});
+```
+
+And now create a client `./client.ts`:
+
+```ts
+import { WebSocketClient } from 'ts-duplex/WebSocketClient';
+import { AllTypes } from './schema';
+
+const form = document.querySelector('form')! as HTMLFormElement;
+const messages = document.querySelector('#messages')! as HTMLUListElement;
+const messageInput = document.querySelector('#message')! as HTMLInputElement;
+const usernameInput = document.querySelector('#username')! as HTMLInputElement;
+const stopBtn = document.querySelector('#stop')! as HTMLButtonElement;
+
+usernameInput.value = crypto.randomUUID().substring(0, 8);
+
+const client = new WebSocketClient<AllTypes>('ws://localhost:3030');
+
+stopBtn.addEventListener('click', () => {
+  client.send('gracefulDisconnect');
+});
+
+client.on('newMessage', ({ from, content, time }) => {
+  if (from === usernameInput.value) return;
+
+  const message = `[${new Date(
+    time
+  ).toLocaleTimeString()}] ${from}: ${content}`;
+  const li = document.createElement('li');
+  li.innerText = message;
+
+  messages.appendChild(li);
+});
+
+client.on('hello', () => {
+  const li = document.createElement('b');
+  li.innerText = 'Server said hi';
+
+  messages.appendChild(li);
+});
+
+form.addEventListener('submit', (ev) => {
+  ev.preventDefault();
+  const content = messageInput.value;
+  const from = usernameInput.value;
+
+  if (!content) return;
+
+  client.send('sendMessage', {
+    as: from,
+    content,
+  });
+
+  messageInput.value = '';
+});
+```
+
+And we are done! See and run this example [here](examples/ws)
+
+# Caviats
+
+- When method requires no data, type it as `null`
+- Refactoring of method names with lsp is not possible in the current version. Proxy client could enable that
+- The API is more or less final, but I may want to refactor names of functions before version 1

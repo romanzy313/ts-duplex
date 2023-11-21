@@ -1,6 +1,6 @@
-import z from 'zod';
 import { TypePack } from 'ts-duplex';
 import type { InferZodValidatorType } from 'ts-duplex/validators/zod';
+import z from 'zod';
 
 export const Server2Client = {
   newMessage: z.object({
@@ -20,6 +20,6 @@ export const Client2Server = {
 };
 
 export type AllTypes = TypePack<
-  InferZodValidatorType<typeof Client2Server>,
+  InferZodValidatorType<typeof Client2Server>, // client to server communication goes first
   InferZodValidatorType<typeof Server2Client>
 >;

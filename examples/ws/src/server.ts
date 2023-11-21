@@ -1,18 +1,10 @@
-/* eslint-disable no-undef */
-
-import express from 'express';
-import { WebSocketServer } from 'ws';
-import fs from 'fs';
 import http from 'http';
+import { WebSocketServer } from 'ws';
 import { WsDuplex } from 'ts-duplex/integrations/ws';
-import { AllTypes, Client2Server, Server2Client } from './schema';
 import { zodValidator } from 'ts-duplex/validators/zod';
+import { AllTypes, Client2Server, Server2Client } from './schema';
+
 const port = 3030;
-
-// app.listen(port, () => {
-//   console.log(`Example app listening on port ${port}`);
-// });
-
 const server = http.createServer();
 server.listen(port, () => {
   console.log('server listening at', `http://localhost:${port}/`);
@@ -21,8 +13,7 @@ server.listen(port, () => {
 const wss = new WebSocketServer({ server });
 
 wss.on('connection', function (_ws) {
-  // ...
-
+  // upgrade default ws into typesafe one and define validators
   const ws = new WsDuplex<AllTypes>(_ws, {
     Client2Server: zodValidator(Client2Server),
     Server2Client: zodValidator(Server2Client),
@@ -54,7 +45,7 @@ wss.on('connection', function (_ws) {
       });
   });
 
-  // just for example
+  // just for sake of example
   ws.on('gracefulDisconnect', () => {
     setTimeout(() => {
       _ws.close(1000, 'graceful shutdown');
