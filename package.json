@@ -2,8 +2,12 @@
   "name": "ts-duplex",
   "description": "description",
   "version": "0.0.0",
+  "type": "module",
   "exports": {
-    ".": "./dist/index.js"
+    ".": "./dist/index.js",
+    "./WebSocketClient": "./dist/WebSocketClient.js",
+    "./integrations/*": "./dist/integrations/*.js",
+    "./validators/*": "./dist/validators/*.js"
   },
   "engines": {
     "node": "18",
@@ -15,6 +19,7 @@
   ],
   "scripts": {
     "dev": "vitest",
+    "dev:build": "tsc --watch",
     "build": "tsc",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -31,6 +36,7 @@
   "devDependencies": {
     "@playwright/test": "^1.38.0",
     "@types/node": "^18.17.17",
+    "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
     "eslint": "^8.49.0",
@@ -42,7 +48,9 @@
     "typescript": "^5.0.2",
     "vite": "^4.4.9",
     "vite-plugin-dts": "^3.6.3",
-    "vitest": "^0.34.4"
+    "vitest": "^0.34.4",
+    "ws": "^8.14.2",
+    "zod": "^3.22.4"
   },
   "license": "MIT",
   "keywords": [],
@@ -50,5 +58,8 @@
     "type": "git",
     "url": "https://github.com/romanzy313/ts-duplex.git"
   },
-  "author": "Roman Volovoy"
+  "author": "Roman Volovoy",
+  "dependencies": {
+    "reconnecting-websocket": "^4.4.0"
+  }
 }

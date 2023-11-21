@@ -1,6 +1,12 @@
 # Getting started
 
-clone the repo and detach from 
+// define types on one object
+
+// use proxy to make types refactorable?
+// can separate dots into thier own recursive types
+
+clone the repo and detach from
+
 ```bash
 git clone https://github.com/romanzy-1612/modern-ts-lib-starter.git PROJECTNAME
 cd PROJECTNAME
@@ -8,11 +14,13 @@ rm -rf ./.git
 ```
 
 customize this template
+
 ```bash
 node init-template.js
 ```
 
 install dependencies and run tests
+
 ```bash
 pnpm install
 pnpm test
@@ -39,7 +47,6 @@ pnpm install ts-duplex
 
 Use your library as folloing:
 
-
 ```typescript
 import { DummyClass } from 'ts-duplex/src';
 console.log(DummyClass);
@@ -60,16 +67,19 @@ description
 # Installation
 
 npm
+
 ```bash
 npm install ts-duplex
 ```
 
 yarn
+
 ```bash
 yarn add ts-duplex
 ```
 
 pnpm
+
 ```bash
 pnpm install ts-duplex
 ```
