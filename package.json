@@ -1,0 +1,58 @@
+{
+  "name": "placeholder-lib-name",
+  "description": "<<DESCRIPTION>>",
+  "version": "0.0.0",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "engines": {
+    "node": "18",
+    "pnpm": "8"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "dev": "vitest",
+    "build": " pnpm build:tsc",
+    "build:tsc": "tsc",
+    "build:vite": "vite build",
+    "test": "vitest run && playwright test",
+    "test:watch": "vitest",
+    "test:coverage": "vitest --coverage",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test --trace on",
+    "test:publish": "pnpm prepublishOnly && pnpm pack",
+    "prepublishOnly": "pnpm clean && pnpm prettier && pnpm lint && pnpm test && pnpm build",
+    "clean": "rimraf -rf ./dist && rimraf -rf ./types && rimraf -rf ./*-*.tgz",
+    "format": "pnpm clean && pnpm prettier && pnpm lint",
+    "lint": "eslint . --ext .ts --fix",
+    "lint:dry": "eslint . --ext .ts",
+    "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "prettier:dry": "prettier --config .prettierrc 'src/**/*.ts'"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.38.0",
+    "@types/node": "^18.17.17",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^8.49.0",
+    "eslint-config-prettier": "^8.10.0",
+    "eslint-plugin-jest": "^26.9.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.8",
+    "rimraf": "^3.0.2",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.9",
+    "vite-plugin-dts": "^3.6.3",
+    "vitest": "^0.34.4"
+  },
+  "license": "MIT",
+  "keywords": [],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/<<GIT-USERNAME>>/placeholder-lib-name.git"
+  },
+  "author": "<<AUTHOR>>"
+}
