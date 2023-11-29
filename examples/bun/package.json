@@ -1,0 +1,19 @@
+{
+  "name": "ts-duplex-bun",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "build-client": "pnpm bun ./build-client.ts",
+    "dev": "pnpm bun --watch ./src/index.ts"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "bun": "^1.0.14",
+    "ts-duplex": "workspace:^"
+  }
+}

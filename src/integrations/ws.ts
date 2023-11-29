@@ -11,8 +11,8 @@ export class WsDuplex<T extends TypePack> extends TypedDuplex<
   T['Server2Client'],
   T['Client2Server']
 > {
-  constructor(public ws: WebSocket, opts?: WsDuplexOptions) {
-    ws.on('message', (data) => {
+  constructor(public ctx: WebSocket, opts?: WsDuplexOptions) {
+    ctx.on('message', (data) => {
       // convert and ensure its of right format
       const todoData = data.toString();
 
@@ -20,11 +20,11 @@ export class WsDuplex<T extends TypePack> extends TypedDuplex<
     });
 
     // cleanup the events
-    ws.on('close', () => {
+    ctx.on('close', () => {
       this.offAll();
     });
 
-    super(ws.send.bind(ws), {
+    super(ctx.send.bind(ctx), {
       This2Other: opts?.Server2Client,
       Other2This: opts?.Client2Server,
     });

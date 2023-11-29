@@ -48,6 +48,8 @@
     "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
+    "bun": "^1.0.14",
+    "bun-types": "^1.0.14",
     "eslint": "^8.49.0",
     "eslint-config-prettier": "^8.10.0",
     "eslint-plugin-jest": "^26.9.0",

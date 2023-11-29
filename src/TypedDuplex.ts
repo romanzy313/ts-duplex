@@ -52,7 +52,7 @@ export class TypedDuplex<
   private eventMap: InternalEventMap = {} as InternalEventMap;
 
   // validators here
-
+  // ability to set context, like the original one
   constructor(
     private sendFn: (msg: string) => void,
     private internalOptions: InternalOptions

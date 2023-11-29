@@ -31,6 +31,8 @@ export class WebSocketClient<T extends TypePack> extends TypedDuplex<
       if (ev.code === 1000) {
         // if (ev.code === 1000 || ev.code === 1005) {
         console.log('Gracefully closed the connection');
+        // is this needed?
+        ws.close(1000);
         this.offAll();
       }
     });
@@ -53,7 +55,7 @@ export class WebSocketClient<T extends TypePack> extends TypedDuplex<
   }
 
   public stop() {
-    this.ws.close();
+    this.ws.close(1000);
     this.offAll();
   }
 }
