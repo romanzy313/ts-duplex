@@ -1,5 +1,5 @@
 import { WebSocketClient } from 'ts-duplex/WebSocketClient';
-import { AllTypes } from './schema';
+import type { AllTypes } from './schema';
 
 const form = document.querySelector('form')! as HTMLFormElement;
 const messages = document.querySelector('#messages')! as HTMLUListElement;

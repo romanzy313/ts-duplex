@@ -2,7 +2,7 @@ import http from 'http';
 import { WebSocketServer } from 'ws';
 import { WsDuplex } from 'ts-duplex/integrations/ws';
 import { zodValidator } from 'ts-duplex/validators/zod';
-import { AllTypes, Client2Server, Server2Client } from './schema';
+import { type AllTypes, Client2Server, Server2Client } from './schema';
 
 const port = 3030;
 const server = http.createServer();

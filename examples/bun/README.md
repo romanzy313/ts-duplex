@@ -1,15 +1,5 @@
-# ts-duplex-bun
+Before running make sure the main package is built. In the root of the repo run `pnpm build`
 
-To install dependencies:
+---
 
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.0.6. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+To run the example run commands `pnpm build-client` and `pnpm dev`. Go to `http://localhost:3031` to see it working.

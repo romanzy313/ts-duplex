@@ -1,26 +1,22 @@
 # ts-duplex
 
-A simple library to add typesafety to bi-directional communications in full-stack typescript applications. Ts-duplex enables great DX while validating data and making your applications safer. This library includes a universal websocket client, [zod](https://github.com/colinhacks/zod) validator, and [ws](https://github.com/websockets/ws) integration
+A simple library to add typesafety to bi-directional communications in full-stack typescript applications. Ts-duplex enables great DX while validating data and making your applications safer.
 
 <!-- Read the docs (TODO) -->
 
 ## Features
 
-<!--
-- Optional validation of inputs/outputs
-- -->
-
 ### Validators
 
-- [x] Zod
+- [x] [Zod](https://github.com/colinhacks/zod)
 - [ ] Typebox
 
 ### Integrations
 
 - [x] Universal WebSocket client
-- [x] Ws
+- [x] [Ws](https://github.com/websockets/ws)
+- [x] [Bun](https://github.com/oven-sh/bun)
 - [ ] Cloudflare Workers websockets
-- [ ] Bun
 
 # Getting started
 
@@ -46,10 +42,10 @@ pnpm install ts-duplex@latest
 
 ## Quick example
 
-Define schemas first. `AllTypes` must be a `Typepack` with `Server2Client` and `Client2Server`. These types can be defined directly without using zod, but then typesafety only happens in your IDE. Use `InferZodValidatorType` to easily convert schemas into types. `schema.ts`:
+Define schemas first. `AllTypes` must be a `TypePack` with `Server2Client` and `Client2Server`. These types can be defined directly without using zod, but then typesafety only happens in the IDE. Use `InferZodValidatorType` to easily convert schemas into types. `schema.ts`:
 
 ```ts
-import { TypePack } from 'ts-duplex';
+import type { TypePack } from 'ts-duplex';
 import type { InferZodValidatorType } from 'ts-duplex/validators/zod';
 import z from 'zod';
 
@@ -84,7 +80,7 @@ import http from 'http';
 import { WebSocketServer } from 'ws';
 import { WsDuplex } from 'ts-duplex/integrations/ws';
 import { zodValidator } from 'ts-duplex/validators/zod';
-import { AllTypes, Client2Server, Server2Client } from './schema';
+import { type AllTypes, Client2Server, Server2Client } from './schema';
 
 const port = 3030;
 const server = http.createServer();
@@ -140,7 +136,7 @@ And now create a client. `client.ts`:
 
 ```ts
 import { WebSocketClient } from 'ts-duplex/WebSocketClient';
-import { AllTypes } from './schema';
+import type { AllTypes } from './schema';
 
 const form = document.querySelector('form')! as HTMLFormElement;
 const messages = document.querySelector('#messages')! as HTMLUListElement;
@@ -192,7 +188,7 @@ form.addEventListener('submit', (ev) => {
 });
 ```
 
-Lets not forget about client html `index.html`:
+And finally html `index.html`:
 
 ```html
 <form>
@@ -208,7 +204,7 @@ Lets not forget about client html `index.html`:
 <script type="module" src="/src/client.ts"></script>
 ```
 
-And we are done! See and run this example [here](examples/ws)
+That is all! See and run this ws example [here](examples/ws). Bun example is available [here](examples/bun).
 
 # API
 
