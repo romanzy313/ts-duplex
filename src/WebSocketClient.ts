@@ -33,9 +33,6 @@ export class WebSocketClient<T extends TypePack> extends TypedDuplex<
         console.log('Gracefully closed the connection');
         // is this needed?
         ws.close(1000);
-
-        // remove this!!
-        this.offAll();
       }
     });
     ws.addEventListener('open', (ev) => {
@@ -105,8 +102,10 @@ export class WebSocketClient<T extends TypePack> extends TypedDuplex<
     return this;
   }
 
-  public stop() {
+  /**
+   * Disconnects from the socket. You can cleanup all event listeners if needed by running this.offAll()
+   */
+  public disconnect() {
     this.ws.close(1000);
-    this.offAll();
   }
 }

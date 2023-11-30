@@ -25,8 +25,8 @@ export class BunDuplex<T extends TypePack, D = unknown> extends TypedDuplex<
 
   // bun integration, kinda ugly
   close(_: any, code: number, reason: string) {
+    // here we must cleanup, as it is server side, connection is unique per client
     this.offAll();
-    //
   }
   open(_: any) {
     // no open is declared?

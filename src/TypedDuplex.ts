@@ -299,8 +299,8 @@ export class TypedDuplex<
     }
 
     // clear everything otherwise
-    this.eventMap = {};
     this.eventsStar = [];
+    this.eventMap = {};
 
     return this;
   }

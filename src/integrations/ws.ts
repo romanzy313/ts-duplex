@@ -21,6 +21,7 @@ export class WsDuplex<T extends TypePack> extends TypedDuplex<
 
     // cleanup the events
     ctx.on('close', () => {
+      // here we must cleanup, as it is server side, connection is unique per client
       this.offAll();
     });
 
