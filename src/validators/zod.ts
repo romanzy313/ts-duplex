@@ -1,3 +1,4 @@
+import { ValidationError } from '../helpers/errors';
 import { ValidatorFn } from '../types';
 import z from 'zod';
 
@@ -9,13 +10,13 @@ export type InferZodValidatorType<T extends ZodValidatorDefinition> = {
 };
 
 export function zodValidator(def: ZodValidatorDefinition): ValidatorFn {
-  return (key, data) => {
+  return (key, value) => {
     if (!(key in def)) {
-      throw new Error('bad event name');
+      throw new ValidationError(`unknown event '${key}'`);
     }
 
     const validator = def[key];
 
-    return validator.parse(data);
+    return validator.parse(value);
   };
 }

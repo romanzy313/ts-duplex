@@ -13,7 +13,7 @@ export class WebSocketClient<T extends TypePack> extends TypedDuplex<
   T['Client2Server'],
   T['Server2Client']
 > {
-  public ws: ReconnectingWebSocket;
+  public raw: ReconnectingWebSocket;
 
   private eventsStateChanged: ((connectionState: ConnectionState) => void)[] =
     [];
@@ -52,7 +52,7 @@ export class WebSocketClient<T extends TypePack> extends TypedDuplex<
         This2Other: opts?.Client2Server,
       }
     );
-    this.ws = ws;
+    this.raw = ws;
     // this.WsImpl = opts?.WebSocket || WebSocket;
   }
 
@@ -65,13 +65,13 @@ export class WebSocketClient<T extends TypePack> extends TypedDuplex<
 
   public getConnectionState(): ConnectionState {
     // this.ws.readyState
-    if (this.ws.readyState === ReconnectingWebSocket.CLOSED)
+    if (this.raw.readyState === ReconnectingWebSocket.CLOSED)
       return 'disconnected';
-    else if (this.ws.readyState === ReconnectingWebSocket.OPEN)
+    else if (this.raw.readyState === ReconnectingWebSocket.OPEN)
       return 'connected';
     // I dont think it can ever get to here?
     // its wierd there is no native event
-    else if (this.ws.readyState === ReconnectingWebSocket.CONNECTING)
+    else if (this.raw.readyState === ReconnectingWebSocket.CONNECTING)
       return 'connecting';
     else return 'disconnecting';
   }
@@ -136,7 +136,7 @@ export class WebSocketClient<T extends TypePack> extends TypedDuplex<
     } else {
       // we are disconnected, connect
 
-      this.ws.reconnect();
+      this.raw.reconnect();
       return this.waitForConnectionStateChange(['connected']);
     }
   }
@@ -152,7 +152,7 @@ export class WebSocketClient<T extends TypePack> extends TypedDuplex<
    * @returns Promise that resolves when disconnected
    */
   public disconnect(code?: number, reason?: string): Promise<void> {
-    this.ws.close(code, reason);
+    this.raw.close(code, reason);
 
     return this.waitForConnectionStateChange(['disconnected']);
   }

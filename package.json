@@ -10,7 +10,7 @@
     "duplex",
     "zod"
   ],
-  "version": "0.9.14",
+  "version": "0.9.15",
   "exports": {
     ".": "./dist/index.js",
     "./TypedDuplex": "./dist/TypedDuplex.js",
@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.38.0",
+    "@sinclair/typebox": "0.24.8",
     "@types/node": "^18.17.17",
     "@types/ws": "^8.5.10",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
@@ -70,7 +71,7 @@
     "url": "https://github.com/romanzy313/ts-duplex.git"
   },
   "author": "Roman Volovoy",
-  "dependencies": {
+  "peer-dependencies": {
     "reconnecting-websocket": "^4.4.0"
   }
 }

@@ -1,25 +1,25 @@
 import { TypePack } from 'ts-duplex';
-import type { InferZodValidatorType } from 'ts-duplex/validators/zod';
-import z from 'zod';
-
+import type { InferTypeboxValidatorType } from 'ts-duplex/validators/typebox';
+// import z from 'zod';
+import { Type } from '@sinclair/typebox';
 export const Server2Client = {
-  newMessage: z.object({
-    from: z.string(),
-    content: z.string(),
-    time: z.number(),
+  newMessage: Type.Object({
+    from: Type.String(),
+    content: Type.String(),
+    time: Type.Number(),
   }),
-  hello: z.null(),
+  hello: Type.Null(),
 };
 
 export const Client2Server = {
-  sendMessage: z.object({
-    as: z.string(),
-    content: z.string(),
+  sendMessage: Type.Object({
+    as: Type.String(),
+    content: Type.String(),
   }),
-  gracefulDisconnect: z.null(),
+  gracefulDisconnect: Type.Null(),
 };
 
 export type AllTypes = TypePack<
-  InferZodValidatorType<typeof Client2Server>, // client to server communication goes first
-  InferZodValidatorType<typeof Server2Client>
+  InferTypeboxValidatorType<typeof Client2Server>, // client to server communication goes first
+  InferTypeboxValidatorType<typeof Server2Client>
 >;

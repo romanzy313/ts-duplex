@@ -15,6 +15,9 @@ importers:
       '@playwright/test':
         specifier: ^1.38.0
         version: 1.38.0
+      '@sinclair/typebox':
+        specifier: 0.24.8
+        version: 0.24.8
       '@types/node':
         specifier: ^18.17.17
         version: 18.17.17
@@ -72,6 +75,9 @@ importers:
 
   examples/bun:
     dependencies:
+      '@sinclair/typebox':
+        specifier: 0.24.8
+        version: 0.24.8
       bun:
         specifier: ^1.0.14
         version: 1.0.14
@@ -579,6 +585,9 @@ packages:
       colors: 1.2.5
       string-argv: 0.3.2
     dev: true
+
+  /@sinclair/typebox@0.24.8:
+    resolution: {integrity: sha512-4Cf8AFKViEeTifdga3mQxNmWbLPQJ0Ab5nAODCWulf58rWEqFEiBBsqc/RoRdugW0QyMwl0pZTKDyrVhGEYOYA==}
 
   /@sinclair/typebox@0.27.8:
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}

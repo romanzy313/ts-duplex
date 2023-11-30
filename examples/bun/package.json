@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build-client": "pnpm bun ./build-client.ts",
-    "dev": "pnpm bun --watch ./src/index.ts"
+    "dev": "pnpm bun --watch ./src/server.ts"
   },
   "devDependencies": {
     "bun-types": "latest"
@@ -13,6 +13,7 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "@sinclair/typebox": "0.24.8",
     "bun": "^1.0.14",
     "ts-duplex": "workspace:^"
   }

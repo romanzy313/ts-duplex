@@ -1,43 +1,33 @@
 # ts-duplex
 
-A simple library to add typesafety to bi-directional communications in full-stack typescript applications. Ts-duplex enables great DX while validating data and making your applications safer.
-
-<!-- Read the docs (TODO) -->
+A simple library to add typesafety to bi-directional communications in full-stack typescript applications. Ts-duplex enables great DX while making your application safer.
 
 ## Features
 
 ### Validators
 
 - [x] [Zod](https://github.com/colinhacks/zod)
-- [ ] Typebox
+- [x] [Typebox](https://github.com/sinclairzx81/typebox)
 
 ### Integrations
 
 - [x] Universal WebSocket client
 - [x] [Ws](https://github.com/websockets/ws)
 - [x] [Bun](https://github.com/oven-sh/bun)
-- [ ] Cloudflare Workers websockets
+- [ ] [Cloudflare Workers Websockets](https://developers.cloudflare.com/workers/runtime-apis/websockets/)
 
 # Getting started
 
 ## Installation
 
-npm
-
 ```bash
 npm install ts-duplex@latest
 ```
 
-yarn
+To use `WebSocketClient` install peer dependency `reconnecting-websocket`:
 
 ```bash
-yarn add ts-duplex@latest
-```
-
-pnpm
-
-```bash
-pnpm install ts-duplex@latest
+npm install reconnecting-websocket
 ```
 
 ## Quick example
@@ -204,7 +194,12 @@ And finally html `index.html`:
 <script type="module" src="/src/client.ts"></script>
 ```
 
-That is all! See and run this ws example [here](examples/ws). Bun example is available [here](examples/bun).
+That is all!
+
+# Examples
+
+- [ws + zod](examples/ws)
+- [Bun + Typebox](examples/bun).
 
 # API
 
@@ -212,7 +207,7 @@ TODO. Most things are well typed. Try it out and explore!
 
 # Caviats
 
-- When method requires no data, type it as `null`
+- When method requires no data, type it as `null` (because json encoding forces undefined to become null)
 - Refactoring of method names with lsp is not possible in the current version. Proxy client could enable that.
 - The API is more or less final, but I may want to refactor names of functions/type and move exports around before version 1.0
 - This lib really needs a better name

@@ -12,9 +12,9 @@ server.listen(port, () => {
 
 const wss = new WebSocketServer({ server });
 
-wss.on('connection', function (_ws) {
+wss.on('connection', function (raw) {
   // upgrade default ws into typesafe one and define validators
-  const ws = new WsDuplex<AllTypes>(_ws, {
+  const ws = new WsDuplex<AllTypes>(raw, {
     Client2Server: zodValidator(Client2Server),
     Server2Client: zodValidator(Server2Client),
   });
@@ -48,7 +48,7 @@ wss.on('connection', function (_ws) {
   // just for sake of example
   ws.on('gracefulDisconnect', () => {
     setTimeout(() => {
-      _ws.close(1000, 'graceful shutdown');
+      raw.close(1000, 'graceful shutdown');
     }, 2000);
   });
 });

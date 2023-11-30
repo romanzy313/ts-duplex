@@ -32,9 +32,7 @@ describe('zod validator', () => {
 
     expect(validator('another', 'woorld')).toBe('woorld');
     expect(validator('hello', { field2: 44 })).toStrictEqual({ field2: 44 });
-    expect(() => validator('wrong key', 'abracadabra')).toThrowError(
-      'bad event name'
-    );
+    expect(() => validator('wrong key', 'abracadabra')).toThrowError();
     // bad validation
     expect(() => validator('hello', 'abracadabra')).toThrowError(z.ZodError);
   });
