@@ -11,9 +11,19 @@ usernameInput.value = crypto.randomUUID().substring(0, 8);
 
 const client = new WebSocketClient<AllTypes>('ws://localhost:3030');
 
-stopBtn.addEventListener('click', () => {
-  client.send('gracefulDisconnect');
+client.onConnectionStateChanged((state) => {
+  console.log('connection changed', state);
 });
+
+const off = client.on('*', (topic, data) => {
+  console.log(`[${topic}]`, data);
+});
+
+setTimeout(() => {
+  console.log('offed star sub');
+
+  off();
+}, 5000);
 
 client.on('newMessage', ({ from, content, time }) => {
   if (from === usernameInput.value) return;
@@ -48,4 +58,8 @@ form.addEventListener('submit', (ev) => {
   });
 
   messageInput.value = '';
+});
+
+stopBtn.addEventListener('click', () => {
+  client.send('gracefulDisconnect');
 });

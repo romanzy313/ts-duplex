@@ -19,3 +19,12 @@ export type Validators = {
   This2Other?: ValidatorFn;
   Other2This?: ValidatorFn;
 };
+
+export type ConnectionState =
+  | 'connected'
+  | 'connecting'
+  | 'disconnected'
+  | 'disconnecting';
+
+// export type AllEventListener = (topic: string, data: any) => void;
+// export type ConnectionChangedEventListener = (connectionState: string) => void;

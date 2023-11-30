@@ -42,6 +42,7 @@ function encode(id: number, op: string, data: any): string {
 
 type InternalOptions = {
   debug?: boolean; // non optional method to log incoming/outgoing events
+  // handleError?: ()
 } & Validators;
 
 export class TypedDuplex<
@@ -50,7 +51,7 @@ export class TypedDuplex<
 > {
   private count = 0;
   private eventMap: InternalEventMap = {} as InternalEventMap;
-
+  private eventsStar: ((topic: string, data: any) => void)[] = [];
   // validators here
   // ability to set context, like the original one
   constructor(
@@ -72,11 +73,21 @@ export class TypedDuplex<
     event: E,
     data: Other2This[E]
   ): boolean {
+    // data is different to emit for all?
+
+    // separate
+
     const listeners = this.eventMap[event as string];
     if (!listeners) return false;
-    listeners.forEach((callback) => {
-      callback(data);
-    });
+    for (let i = 0; i < listeners.length; i++) {
+      listeners[i](data);
+    }
+
+    const starListeners = this.eventsStar;
+    for (let i = 0; i < starListeners.length; i++) {
+      starListeners[i](event as string, data);
+    }
+
     return true;
   }
 
@@ -146,17 +157,29 @@ export class TypedDuplex<
    * @returns
    */
   public on<E extends keyof Other2This>(
+    event: '*',
+    listener: (topic: E, data: Other2This[E]) => void
+  ): UnsubscribeFn;
+  public on<E extends keyof Other2This>(
     event: E,
     listener: (data: Other2This[E]) => void
+  ): UnsubscribeFn;
+  public on<E extends keyof Other2This>(
+    event: E | '*',
+    listener:
+      | ((data: Other2This[E]) => void)
+      | ((topic: E, data: Other2This[E]) => void)
   ): UnsubscribeFn {
-    // if (!this.eventMap[event as string]) this.eventMap[event as string] = [];
-    this.eventMap[event as string] = this.eventMap[event as string] ?? [];
-    this.eventMap[event as string].push(listener);
+    if (event === '*') {
+      this.eventsStar.push(listener as any);
+      return () => this.off('*', listener as any);
+    }
+
+    if (!this.eventMap[event as string]) this.eventMap[event as string] = [];
+    this.eventMap[event as string].push(listener as any);
 
     // return unsubscriber function, very nice
-    return () => {
-      this.off(event, listener);
-    };
+    return () => this.off(event, listener as any);
   }
 
   // TODO other convenience methods
@@ -217,9 +240,29 @@ export class TypedDuplex<
    * @param listener Callback function used when subscribed
    */
   public off<E extends keyof Other2This>(
+    event: '*',
+    listener: (topic: E, data: Other2This[E]) => void
+  ): this;
+  public off<E extends keyof Other2This>(
     event: E,
     listener: (data: Other2This[E]) => void
+  ): this;
+  public off<E extends keyof Other2This>(
+    event: E | '*',
+    listener:
+      | ((data: Other2This[E]) => void)
+      | ((topic: E, data: Other2This[E]) => void)
   ): this {
+    if (event === '*') {
+      for (let i = this.eventsStar.length - 1; i >= 0; i -= 1) {
+        if (this.eventsStar[i] === listener) {
+          this.eventsStar.splice(i, 1);
+          break;
+        }
+      }
+      return this;
+    }
+
     const listeners = this.eventMap[event as string];
     if (!listeners) return this;
 
@@ -240,14 +283,25 @@ export class TypedDuplex<
    * @param event Event name
    * @returns
    */
-  public offAll<E extends keyof Other2This>(event?: E): this {
+  public offAll<E extends keyof Other2This>(event?: E | '*'): this {
+    // only specific event
     if (event) {
+      if (event === '*') {
+        // clear it, is this okay?
+        this.eventsStar = [];
+        return this;
+      }
+
       const listeners = this.eventMap[event as string];
       if (!listeners) return this;
       delete this.eventMap[event as string];
-    } else {
-      this.eventMap = {};
+      return this;
     }
+
+    // clear everything otherwise
+    this.eventMap = {};
+    this.eventsStar = [];
+
     return this;
   }
 }
