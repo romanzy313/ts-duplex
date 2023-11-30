@@ -76,6 +76,22 @@ export class WebSocketClient<T extends TypePack> extends TypedDuplex<
     else return 'disconnecting';
   }
 
+  public waitForConnectionStateChange(
+    toState: ConnectionState[]
+  ): Promise<void> {
+    const state = this.getConnectionState();
+
+    if (toState.includes(state)) return Promise.resolve();
+
+    return new Promise<void>((resolve) => {
+      const off = this.onConnectionStateChanged((newState) => {
+        if (toState.includes(newState)) {
+          off();
+          resolve();
+        }
+      });
+    });
+  }
   public onConnectionStateChanged(
     listener: (connectionState: ConnectionState) => void
   ) {
@@ -103,9 +119,41 @@ export class WebSocketClient<T extends TypePack> extends TypedDuplex<
   }
 
   /**
-   * Disconnects from the socket. You can cleanup all event listeners if needed by running this.offAll()
+   * Connect to the websocket. If already connected nothing is done
+   * No need to wait for connection to establish. Can send messages right away
+   * They will be sent after connection is established
+   * @returns Promise that resolves when connected
    */
-  public disconnect() {
-    this.ws.close(1000);
+  public async connect(): Promise<void> {
+    //
+    const currentState = this.getConnectionState();
+
+    if (currentState == 'connected') {
+      return;
+    } else if (currentState == 'connecting') {
+      // once function only
+      return this.waitForConnectionStateChange(['connected']);
+    } else {
+      // we are disconnected, connect
+
+      this.ws.reconnect();
+      return this.waitForConnectionStateChange(['connected']);
+    }
+  }
+
+  /**
+   * Disconnects from the websocket
+   *
+   * If this client is no longer needed, make sure to cleanup
+   * subscribed events with this.offAll()
+   * @param code Optional code for disconnection. Defaults to 1000 (aka graceful disconnect).
+   * Reference can be found on MDN https://developer.mozilla.org/en-US/docs/Web/API/CloseEvent/code
+   * @param reason Optional reason for disconnection
+   * @returns Promise that resolves when disconnected
+   */
+  public disconnect(code?: number, reason?: string): Promise<void> {
+    this.ws.close(code, reason);
+
+    return this.waitForConnectionStateChange(['disconnected']);
   }
 }

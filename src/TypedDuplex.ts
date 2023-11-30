@@ -4,7 +4,7 @@
 //   ? []
 //   : [T];
 
-import { Validators, TypePack } from './types';
+import { Validators, TypePack, ConnectionState } from './types';
 
 type EventName = string;
 type EventData = unknown;
@@ -25,8 +25,8 @@ type ConditionalOptionalArg<T> = T extends null ? [T?] : [T];
 type UnsubscribeFn = () => void;
 // type ListenerFunction = (...args: any[]) => void;
 
-type Encoded = [number, string, any]; // id, method, data
-function decode(msg: string): Encoded {
+type Encoded = [number | null, string, any]; // id, method, data
+export function decodeMessage(msg: string): Encoded {
   const val = JSON.parse(msg);
 
   if (!Array.isArray(val) || val.length != 3) {
@@ -36,8 +36,12 @@ function decode(msg: string): Encoded {
   return val as Encoded;
 }
 
-function encode(id: number, op: string, data: any): string {
-  return JSON.stringify([id, op, data]);
+export function encodeMessage(
+  id: number | null,
+  event: string,
+  data: any
+): string {
+  return JSON.stringify([id, event, data]);
 }
 
 type InternalOptions = {
@@ -93,7 +97,7 @@ export class TypedDuplex<
 
   protected handleMessage(msg: string) {
     try {
-      const decoded = decode(msg);
+      const decoded = decodeMessage(msg);
       if (this.internalOptions.Other2This) {
         const validatedData = this.internalOptions.Other2This(
           decoded[1],
@@ -121,7 +125,7 @@ export class TypedDuplex<
           ? this.internalOptions.This2Other(event as string, data[0])
           : data[0];
 
-      const encoded = encode(this.count++, event as string, actualData);
+      const encoded = encodeMessage(this.count++, event as string, actualData);
       this.sendFn(encoded);
     } catch (err: any) {
       // capture as error on here
@@ -141,7 +145,7 @@ export class TypedDuplex<
           ? this.internalOptions.This2Other(event as string, data[0])
           : data[0];
 
-      const encoded = encode(this.count++, event as string, actualData);
+      const encoded = encodeMessage(this.count++, event as string, actualData);
       return encoded;
     } catch (err: any) {
       // capture as error on here
@@ -304,4 +308,8 @@ export class TypedDuplex<
 
     return this;
   }
+
+  // protected wrapEventInPromise(listener: (...args: any[]) => void) {
+  //   this.on()
+  // }
 }

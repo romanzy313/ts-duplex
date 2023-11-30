@@ -10,7 +10,7 @@
     "duplex",
     "zod"
   ],
-  "version": "0.9.13",
+  "version": "0.9.14",
   "exports": {
     ".": "./dist/index.js",
     "./TypedDuplex": "./dist/TypedDuplex.js",
@@ -24,7 +24,8 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "CHANGELOG.md"
   ],
   "scripts": {
     "dev": "vitest",
