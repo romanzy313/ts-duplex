@@ -32,23 +32,14 @@ npm install reconnecting-websocket
 
 ## Quick example
 
-Define schemas first. `AllTypes` must be a `TypePack` with `Server2Client` and `Client2Server`. These types can be defined directly without using zod, but then typesafety only happens in the IDE. Use `InferZodValidatorType` to easily convert schemas into types. `schema.ts`:
+Define schemas first. `DuplexTypes` must be a `TypePack` with `Server2Client` and `Client2Server`. These types can be defined directly without using zod, but then typesafety only happens in the IDE. Use `InferZodValidatorType` to convert schema definitions into types. `schema.ts`:
 
 ```ts
 import type { TypePack } from 'ts-duplex';
 import type { InferZodValidatorType } from 'ts-duplex/validators/zod';
 import z from 'zod';
 
-// Record<MethodName, ZodSchema>
-export const Server2Client = {
-  newMessage: z.object({
-    from: z.string(),
-    content: z.string(),
-    time: z.number(),
-  }),
-  hello: z.null(),
-};
-
+// define with zod. shape: Record<string, ZodSchema>
 export const Client2Server = {
   sendMessage: z.object({
     as: z.string(),
@@ -57,9 +48,19 @@ export const Client2Server = {
   gracefulDisconnect: z.null(),
 };
 
-export type AllTypes = TypePack<
-  InferZodValidatorType<typeof Client2Server>,
-  InferZodValidatorType<typeof Server2Client>
+// define as type, as server responses do not need to be validated
+type Server2ClientType = {
+  newMessage: {
+    from: string;
+    content: string;
+    time: number;
+  };
+  hello: null;
+};
+
+export type DuplexTypes = TypePack<
+  InferZodValidatorType<typeof Client2Server>, // client to server communication goes first
+  Server2ClientType // then server to client
 >;
 ```
 
@@ -70,7 +71,7 @@ import http from 'http';
 import { WebSocketServer } from 'ws';
 import { WsDuplex } from 'ts-duplex/integrations/ws';
 import { zodValidator } from 'ts-duplex/validators/zod';
-import { type AllTypes, Client2Server, Server2Client } from './schema';
+import { type DuplexTypes, Client2Server } from './schema';
 
 const port = 3030;
 const server = http.createServer();
@@ -80,11 +81,11 @@ server.listen(port, () => {
 
 const wss = new WebSocketServer({ server });
 
-wss.on('connection', function (_ws) {
+wss.on('connection', function (raw) {
   // upgrade default ws into typesafe one and define validators
-  const ws = new WsDuplex<AllTypes>(_ws, {
+  const ws = new WsDuplex<DuplexTypes>(raw, {
     Client2Server: zodValidator(Client2Server),
-    Server2Client: zodValidator(Server2Client),
+    // Server2Client: zodValidator(Server2Client), // can also provide validator for Server -> Client communcation
   });
 
   ws.send('hello');
@@ -106,7 +107,7 @@ wss.on('connection', function (_ws) {
       time: Date.now(),
     });
 
-    // send payload to everyone
+    // deploy payload to everyone
     if (payload)
       wss.clients.forEach((c) => {
         c.send(payload);
@@ -116,7 +117,7 @@ wss.on('connection', function (_ws) {
   // just for sake of example
   ws.on('gracefulDisconnect', () => {
     setTimeout(() => {
-      _ws.close(1000, 'graceful shutdown');
+      raw.close(1000, 'graceful shutdown');
     }, 2000);
   });
 });
@@ -126,7 +127,7 @@ And now create a client. `client.ts`:
 
 ```ts
 import { WebSocketClient } from 'ts-duplex/WebSocketClient';
-import type { AllTypes } from './schema';
+import type { DuplexTypes } from './schema';
 
 const form = document.querySelector('form')! as HTMLFormElement;
 const messages = document.querySelector('#messages')! as HTMLUListElement;
@@ -136,7 +137,7 @@ const stopBtn = document.querySelector('#stop')! as HTMLButtonElement;
 
 usernameInput.value = crypto.randomUUID().substring(0, 8);
 
-const client = new WebSocketClient<AllTypes>('ws://localhost:3030');
+const client = new WebSocketClient<DuplexTypes>('ws://localhost:3030');
 
 stopBtn.addEventListener('click', () => {
   client.send('gracefulDisconnect');
@@ -203,7 +204,7 @@ That is all!
 
 # API
 
-TODO. Most things are well typed. Try it out and explore!
+TODO. Most things are typed. Try it out and explore!
 
 # Caviats
 
@@ -211,3 +212,4 @@ TODO. Most things are well typed. Try it out and explore!
 - Refactoring of method names with lsp is not possible in the current version. Proxy client could enable that.
 - The API is more or less final, but I may want to refactor names of functions/type and move exports around before version 1.0
 - This lib really needs a better name
+- Could have import issues if your project does not have `"moduleResolution": "Bundler"` in `tsconfig`. Open an issue if it happens!

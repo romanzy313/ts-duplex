@@ -1,5 +1,5 @@
 import { WebSocketClient } from 'ts-duplex/WebSocketClient';
-import type { AllTypes } from './schema';
+import type { DuplexTypes } from './schema';
 
 const form = document.querySelector('form')! as HTMLFormElement;
 const messages = document.querySelector('#messages')! as HTMLUListElement;
@@ -9,7 +9,7 @@ const stopBtn = document.querySelector('#stop')! as HTMLButtonElement;
 
 usernameInput.value = crypto.randomUUID().substring(0, 8);
 
-const client = new WebSocketClient<AllTypes>('ws://localhost:3030');
+const client = new WebSocketClient<DuplexTypes>('ws://localhost:3030');
 
 client.onConnectionStateChanged((state) => {
   console.log('connection changed', state);

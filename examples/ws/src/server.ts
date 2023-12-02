@@ -2,7 +2,7 @@ import http from 'http';
 import { WebSocketServer } from 'ws';
 import { WsDuplex } from 'ts-duplex/integrations/ws';
 import { zodValidator } from 'ts-duplex/validators/zod';
-import { type AllTypes, Client2Server, Server2Client } from './schema';
+import { type DuplexTypes, Client2Server } from './schema';
 
 const port = 3030;
 const server = http.createServer();
@@ -14,9 +14,9 @@ const wss = new WebSocketServer({ server });
 
 wss.on('connection', function (raw) {
   // upgrade default ws into typesafe one and define validators
-  const ws = new WsDuplex<AllTypes>(raw, {
+  const ws = new WsDuplex<DuplexTypes>(raw, {
     Client2Server: zodValidator(Client2Server),
-    Server2Client: zodValidator(Server2Client),
+    // Server2Client: zodValidator(Server2Client), // can provide validator here too
   });
 
   ws.send('hello');
