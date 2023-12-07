@@ -17,6 +17,17 @@ stopBtn.addEventListener('click', () => {
   client.send('gracefulDisconnect');
 });
 
+client.once('newMessage', (data) => {
+  console.log('newMessageOnce', data);
+});
+async function waitForTest() {
+  console.log('started await');
+  const data = await client.waitFor('newMessage');
+  console.log('awaited for data', data);
+}
+
+waitForTest();
+
 client.on('newMessage', ({ from, content, time }) => {
   if (from === usernameInput.value) return;
   console.log('got message', content);

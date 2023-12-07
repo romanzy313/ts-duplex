@@ -13,3 +13,4 @@
 # 0.9.19
 
 - improved Bun integration, it now directly exposes data
+- added conventience functions `.once` and `.waitFor`

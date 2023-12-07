@@ -186,58 +186,6 @@ export class TypedDuplex<
     return () => this.off(event, listener as any);
   }
 
-  // TODO other convenience methods
-  //   /**
-  //    * Subscribes to event once
-  //    * @param event Event name
-  //    * @param listener Callback function to execute when event is emitted
-  //    */
-  //   public once<E extends keyof Other2This>(
-  //     event: E,
-  //     listener: Other2This[E]
-  //   ): this {
-  //     // FIX this will not be cleaned up if offAll is used
-  //     const sub = (...args) => {
-  //       this.off(event, sub as any);
-
-  //       // eslint-disable-next-line prefer-rest-params
-  //       // listener.apply(this, args);
-  //       listener(...args);
-  //     };
-
-  //     this.on(event, sub as any);
-
-  //     return this;
-  //   }
-
-  //   /**
-  //    * Waits for event to complete, currently never rejects
-  //    * @param event Event name
-  //    * @returns In async context returns event data as an array
-  //    */
-  //   public async waitFor<E extends keyof Other2This>(
-  //     event: E
-  //   ): Promise<Arguments<Other2This[E]>> {
-  //     // FIX this will not be cleaned up if offAll is used
-  //     // For now the event will be hanging forever!
-  //     // See skipped test
-
-  //     return new Promise((resolve, _reject) => {
-  //       const sub = (...args) => {
-  //         this.off(event, sub as any);
-
-  //         resolve(args as any);
-  //       };
-
-  //       this.on(event, sub as any);
-  //     });
-  //   }
-
-  // TODO make as event iterator
-  // public async asIterator<E extends keyof Events>(event: E): Promise<Arguments<Events[E]>> {
-
-  // }
-
   /**
    * Unsubscribes from event
    * @param event Event name
@@ -279,8 +227,6 @@ export class TypedDuplex<
     return this;
   }
 
-  // TODO maybe make this protected?
-
   /**
    * Unsubscribes all from event name. If no arguments are passed,
    * all events are removed complely. Used internally when cleaning up
@@ -308,6 +254,59 @@ export class TypedDuplex<
 
     return this;
   }
+
+  /**
+   * Subscribes to event once
+   * @param event Event name
+   * @param listener Callback function to execute when event is emitted
+   */
+  public once<E extends keyof Other2This>(
+    event: E,
+    listener: (data: Other2This[E]) => void
+  ): this {
+    // FIX this may not be cleaned up if offAll is used
+    const sub = (innerData: any) => {
+      listener(innerData);
+
+      setTimeout(() => {
+        this.off(event, sub as any);
+      });
+    };
+
+    this.on(event, sub);
+
+    return this;
+  }
+
+  /**
+   * Waits for event to complete, currently never rejects
+   * @param event Event name
+   * @returns In async context returns event data as an array
+   */
+  public async waitFor<E extends keyof Other2This>(
+    event: E
+  ): Promise<Other2This[E]> {
+    // FIX this may not be cleaned up if offAll is used
+    // this promise could never resolve
+
+    return new Promise((resolve, _reject) => {
+      const sub = (innerData: any) => {
+        resolve(innerData);
+
+        setTimeout(() => {
+          this.off(event, sub);
+        });
+      };
+
+      this.on(event, sub as any);
+    });
+  }
+
+  // TODO other convenience methods
+  // TODO make as event iterator
+  // public async asIterator<E extends keyof Events>(event: E): Promise<Arguments<Events[E]>> {
+
+  // }
 
   // protected wrapEventInPromise(listener: (...args: any[]) => void) {
   //   this.on()
