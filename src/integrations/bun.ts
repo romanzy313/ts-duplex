@@ -11,21 +11,29 @@ type BunDuplexOptions<D> = {
   Client2Server?: ValidatorFn;
 } & BunConfigurableOpts<D>;
 
-export class BunDuplex<T extends TypePack, D = unknown> extends TypedDuplex<
-  T['Server2Client'],
-  T['Client2Server']
-> {
+export class BunDuplex<
+  T extends TypePack,
+  WsData = unknown
+> extends TypedDuplex<T['Server2Client'], T['Client2Server']> {
   // declare a run function?
-  constructor(public ctx: ServerWebSocket<D>, opts?: BunDuplexOptions<D>) {
+  constructor(
+    public ctx: ServerWebSocket<WsData>,
+    opts?: BunDuplexOptions<WsData>
+  ) {
     super(ctx.sendText.bind(ctx), {
       This2Other: opts?.Server2Client,
       Other2This: opts?.Client2Server,
     });
   }
 
+  get data() {
+    return this.ctx.data;
+  }
+
   // bun integration, kinda ugly
   close(_: any, code: number, reason: string) {
     // here we must cleanup, as it is server side, connection is unique per client
+    this.ctx.close(1000);
     this.offAll();
   }
   open(_: any) {

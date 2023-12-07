@@ -9,3 +9,7 @@
 - added Typebox validator
 - improved validation error reporting
 - moved reconnecting-websocket to peer dependency
+
+# 0.9.19
+
+- improved Bun integration, it now directly exposes data

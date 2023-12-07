@@ -1,6 +1,10 @@
 import { bunWebSocketHandler } from 'ts-duplex/integrations/bun';
 import { AllTypes } from './schema';
 
+type Wsdata = {
+  hello: string;
+};
+
 // that object will hook into it
 // tsBun.websocket
 
@@ -16,7 +20,11 @@ const server = Bun.serve({
     if (pathname == '/ws') {
       console.log('websocket request');
 
-      const success = server.upgrade(request);
+      const success = server.upgrade(request, {
+        data: {
+          hello: 'world',
+        },
+      });
       if (success) {
         console.log('upgrade success');
 
@@ -30,13 +38,16 @@ const server = Bun.serve({
       status: 404,
     });
   },
-  websocket: bunWebSocketHandler<AllTypes>({}, (ws) => {
+  websocket: bunWebSocketHandler<AllTypes, Wsdata>({}, (ws) => {
     // forwards all the messages when ws.ctx.publish is called
     // ctx in this case is the original bun socket object
     ws.ctx.subscribe('global-msg');
     ws.send('hello');
 
-    // console.log('hello');
+    // it can mutate the "data" field
+    console.log('data before', ws.data);
+    ws.data.hello = 'webdev';
+    console.log('data after', ws.data);
 
     ws.on('sendMessage', (data) => {
       console.log('got message', data);
