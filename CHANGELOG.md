@@ -14,3 +14,7 @@
 
 - improved Bun integration, it now directly exposes data
 - added conventience functions `.once` and `.waitFor`
+
+# 0.9.20
+
+- star bugfix

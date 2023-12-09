@@ -73,26 +73,20 @@ export class TypedDuplex<
    * @param event Event name
    * @param data Arguments to emit with
    */
-  protected emit<E extends keyof Other2This>(
-    event: E,
-    data: Other2This[E]
-  ): boolean {
+  protected emit<E extends keyof Other2This>(event: E, data: Other2This[E]) {
     // data is different to emit for all?
-
-    // separate
-
-    const listeners = this.eventMap[event as string];
-    if (!listeners) return false;
-    for (let i = 0; i < listeners.length; i++) {
-      listeners[i](data);
-    }
 
     const starListeners = this.eventsStar;
     for (let i = 0; i < starListeners.length; i++) {
       starListeners[i](event as string, data);
     }
 
-    return true;
+    const listeners = this.eventMap[event as string];
+    if (listeners) {
+      for (let i = 0; i < listeners.length; i++) {
+        listeners[i](data);
+      }
+    }
   }
 
   protected handleMessage(msg: string) {
