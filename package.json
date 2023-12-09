@@ -12,11 +12,12 @@
     "zod",
     "typebox"
   ],
-  "version": "0.9.20",
+  "version": "0.9.21",
   "type": "module",
   "exports": {
     ".": "./dist/index.js",
     "./TypedDuplex": "./dist/TypedDuplex.js",
+    "./ServerSerializer": "./dist/ServerSerializer.js",
     "./WebSocketClient": "./dist/WebSocketClient.js",
     "./integrations/*": "./dist/integrations/*.js",
     "./validators/*": "./dist/validators/*.js"
